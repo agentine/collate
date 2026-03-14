@@ -221,6 +221,26 @@ list(ss)    # ['apple', 'banana', 'cherry']
 
 ---
 
+## Performance Notes
+
+All four classes use a **segmented list** (list-of-lists) data structure with a configurable load factor (default: 1 000 elements per sublist). This gives amortised O(log n) for insertions and deletions, and O(1) amortised for indexed access.
+
+| Operation | Complexity |
+|-----------|-----------|
+| `add(value)` | O(log n) |
+| `discard(value)` / `remove(value)` | O(log n) |
+| `sl[i]` (index access) | O(log n) |
+| `value in sl` | O(log n) |
+| `bisect_left` / `bisect_right` | O(log n) |
+| `update(iterable)` (bulk, empty list) | O(k log k) |
+| `update(iterable)` (incremental) | O(k log n) |
+| `irange` / `islice` | O(log n + output) |
+| `len(sl)` | O(1) |
+
+**Memory:** The segmented structure stores at most ~2× the elements in sublist arrays. No external allocations — pure CPython lists throughout.
+
+**Bulk construction:** Initialising with a large iterable is significantly faster than repeated `add()` calls. When the list is empty, `update()` sorts the input once (O(k log k)) and builds sublists directly.
+
 ## Migration from sortedcontainers
 
 ```python
