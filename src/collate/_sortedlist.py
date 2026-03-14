@@ -462,9 +462,9 @@ class SortedKeyList(Generic[T]):
         raise ValueError(f"{value!r} not in list")
 
     def pop(self, index: int = -1) -> T:
-        val = self._list.pop(index)
         if index < 0:
-            index += len(self._keys) + 1
+            index += len(self._list)
+        val = self._list.pop(index)
         del self._keys[index]
         return val
 
